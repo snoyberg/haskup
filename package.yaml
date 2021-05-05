@@ -1,0 +1,29 @@
+name:                haskwrap
+version:             0.1.0.0
+github:              "snoyberg/haskwrap"
+license:             BSD3
+author:              "Michael Snoyman"
+maintainer:          "michael@snoyman.com"
+copyright:           "2021 Michael Snoyman"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+synopsis:            Wrapper executables that install a Haskell toolchain
+category:            Development
+description:         Please see the README on GitHub at <https://github.com/snoyberg/haskwrap#readme>
+
+dependencies:
+- base >= 4.14 && < 5
+- stack >= 2.5 && < 2.6
+- rio
+
+executables:
+  haskwrap:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -with-rtsopts=-N
+    - -rtsopts=ignoreAll
