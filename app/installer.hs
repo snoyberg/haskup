@@ -2,9 +2,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 import RIO
-import Data.String
-import System.Environment
-
 import Development.NSIS
 import Development.NSIS.Plugins.EnvVarUpdate
 
@@ -34,7 +31,7 @@ main = do
     unpage Components
     unpage InstFiles
 
-    section "Install haskup executables" [Required] $ do
+    void $ section "Install haskup executables" [Required] $ do
       setOutPath "$INSTDIR"
       for_ executables $ \exe ->
         file [OName $ fromString exe] $ fromString exe
@@ -49,7 +46,7 @@ main = do
       writeRegDWORD HKCU "Software/Microsoft/Windows/CurrentVersion/Uninstall/$Name" "NoRepair" 1
       writeUninstaller "uninstall-haskup.exe"
 
-    section "Add to user %PATH%"
+    void $ section "Add to user %PATH%"
       [ Description "Add installation directory to user %PATH% to allow running haskup in the console."
       ] $ do
         setEnvVarPrepend HKCU "PATH" "$INSTDIR"
