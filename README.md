@@ -2,6 +2,8 @@
 
 *That's a wrap!*
 
+[![Release](https://github.com/snoyberg/haskwrap/actions/workflows/release.yml/badge.svg)](https://github.com/snoyberg/haskwrap/actions/workflows/release.yml)
+
 This package provides an executable that leverages the GHC toolchain installer logic present in Stack. When run, this executable will ensure that an appropriate GHC version is installed, modify the `PATH` environment variables, and execute the correct command. As a simple example, if you have this executable installed as `haskwrap` and run `haskwrap --ghc 8.8.3 exec runghc Main.hs`, it will:
 
 1. Install GHC 8.8.3 to a user-local directory, if not present.

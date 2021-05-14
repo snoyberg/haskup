@@ -1,0 +1,66 @@
+name: Release
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+    tags:
+      - '**'
+  workflow_dispatch:
+
+jobs:
+  sanity:
+    name: Sanity test (non-Windows)
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+        - os: ubuntu-latest
+        - os: macos-latest
+    steps:
+      - name: Clone project
+        uses: actions/checkout@v2
+      - name: Cache dependencies
+        uses: actions/cache@v1
+        with:
+          path: ~/.stack
+          key: ${{ runner.os }}-${{ hashFiles('stack.yaml') }}
+      - shell: bash
+        name: Build and run tests
+        run: |
+          set -ex
+          stack upgrade
+          stack --version
+          stack test --no-terminal --copy-bins --local-bin-path bin
+      - name: Upload bindist
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ runner.os }}
+          path: bin/*
+  integration-tests:
+    name: Build and publish artifacts
+    runs-on: windows-latest
+    steps:
+      - name: Clone project
+        uses: actions/checkout@v2
+      - name: Cache dependencies
+        uses: actions/cache@v1
+        with:
+          path: ~/.stack
+          key: ${{ runner.os }}-${{ hashFiles('stack.yaml') }}
+      - shell: bash
+        name: Build and run tests
+        run: |
+          set -ex
+          stack upgrade
+          stack --version
+          stack test --no-terminal --copy-bins --local-bin-path bin
+      # FIXME currently it's exactly the same as Linux and OS X
+      # In the near future, add a Windows installer creator and run it here
+      - name: Upload bindist
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ runner.os }}
+          path: bin/*
