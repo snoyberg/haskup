@@ -1,14 +1,16 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 import RIO
-import RIO.Process
+import RIO.Process (exec, augmentPathMap, withModifyEnvVars)
+import RIO.Directory (findExecutable, findExecutablesInDirectories, canonicalizePath)
+import RIO.FilePath (isAbsolute, stripExtension)
 import Stack.Setup
 import Stack.Runners
 import Stack.Types.Config
 import Stack.Types.Version (Version, VersionCheck (..))
 import Stack.Options.GlobalParser
 import Stack.Prelude (WantedCompiler (..), parseVersionThrowing, toFilePath)
-import System.Environment (getArgs, getProgName)
+import System.Environment (getArgs, getProgName, getExecutablePath)
 import System.Terminal (hIsTerminalDeviceOrMinTTY)
 
 getDefaultTerminal :: IO Bool
@@ -59,7 +61,24 @@ main = runBuildConfig $ do
         }
   (_, extraDirs) <- ensureCompilerAndMsys sopts
   let binDirs = map toFilePath $ edBins extraDirs
-  withModifyEnvVars (either impureThrow id . augmentPathMap binDirs) $ exec exeName args
+  exeName' <- findExe binDirs exeName >>= canonicalizePath
+  self <- liftIO getExecutablePath
+  when (exeName' == self) $ error "haskwrap is calling itself, exiting"
+  withModifyEnvVars (either impureThrow id . augmentPathMap binDirs) $ exec exeName' args
+
+findExe :: [FilePath] -> String -> RIO BuildConfig FilePath
+findExe extraBin name
+  | isAbsolute name = pure name
+  | otherwise = do
+      let stripped = fromMaybe name $ stripExtension ".exe" name
+      exes <- findExecutablesInDirectories extraBin stripped
+      case exes of
+        exe:_ -> pure exe
+        [] -> do
+          mexe <- findExecutable stripped
+          case mexe of
+            Just exe -> pure exe
+            Nothing -> error $ "Could not find executable " ++ name
 
 defaultGhcVer :: RIO BuildConfig Version
 defaultGhcVer = do
