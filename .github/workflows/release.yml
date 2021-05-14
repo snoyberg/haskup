@@ -60,6 +60,7 @@ jobs:
           stack --version
           stack test --no-terminal --copy-bins --local-bin-path bin
       - name: Generate installer
+        shell: cmd
         run: |
           bin\installer-generator.exe
           "c:\Program Files (x86)\NSIS\Unicode\makensis.exe" -V3 bin\haskup-installer.nsi
