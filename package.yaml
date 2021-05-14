@@ -27,7 +27,7 @@ executables:
     - -with-rtsopts=-N
     - -rtsopts=ignoreAll
     dependencies:
-    - stack >= 2.5 && < 2.6
+    - stack >= 2.7 && < 2.8
 
   installer-generator:
     main:                installer.hs
