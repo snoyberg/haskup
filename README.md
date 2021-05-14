@@ -1,30 +1,42 @@
-# haskwrap
+# haskup
 
-*That's a wrap!*
+*Cross platform Haskell toolchain installer*
 
-[![Release](https://github.com/snoyberg/haskwrap/actions/workflows/release.yml/badge.svg)](https://github.com/snoyberg/haskwrap/actions/workflows/release.yml)
+[![Release](https://github.com/snoyberg/haskup/actions/workflows/release.yml/badge.svg)](https://github.com/snoyberg/haskup/actions/workflows/release.yml)
 
-This package provides an executable that leverages the GHC toolchain installer logic present in Stack. When run, this executable will ensure that an appropriate GHC version is installed, modify the `PATH` environment variables, and execute the correct command. As a simple example, if you have this executable installed as `haskwrap` and run `haskwrap --ghc 8.8.3 exec runghc Main.hs`, it will:
+This package provides tooling that leverages the GHC toolchain installer logic present in Stack. Its primary purposes currently is to provide a Windows installer which provides 3 executables:
 
-1. Install GHC 8.8.3 to a user-local directory, if not present.
-2. Place the directory containing GHC's binaries on the PATH, as well as `msys2` binaries if running on Windows.
-3. Execute `runghc Main.hs`
+* `stack.exe`
+* `cabal.exe`
+* `haskup.exe`, which can install and run various GHC version
 
-## Automatic command discovery
+In the future, the goal is to have `haskup.exe` itself install and manage various Stack and Cabal versions.
 
-If you rename this executable to something like `ghc` or `runghc`, you do not need to provide the `exec runghc` bit. Instead, this executable will automatically run that command. In other words, you can install this executable to `/usr/bin/ghc`, and it will automatically shell out to a locally installed GHC for you. You can copy or symlink the same executable to `/usr/bin/runghc` and other paths as well for that matter.
+## Sample usage
 
-## Default GHC version
+```
+> haskup --ghc 8.8.3 ghci
+> haskup runghc Main.hs
+> haskup --ghc 8.6.5 exec cmd
+```
 
-If you leave off the `--ghc VERSION`, currently the executable will default to using GHC 8.10.4. This is _not good behavior_. Instead, there should be a config file for the default GHC version, potentially with environment variable and local filepath overrides, and some intelligent way of setting that default value on first execution. Contributions welcome to make that happen!
+Commands will automatically install GHC and `msys2` if necessary, and then run the command in question with a modified `PATH` that includes these directories.
 
-## Minimal command line
+## haskwrap
+
+This package provides a work in progress executable called `haskwrap`. This is intended for use cases where you don't want to call `haskup` explicitly. Instead, if you install `haskwrap` to a location like `/usr/local/bin/ghc`, running that executable will automatically invoke the real `ghc` behind the scenes.
+
+Again, this is a work in progress, and is not included in the Windows installer.
 
 This tool intentionally does minimalistic command line parsing, to allow passthrough of arguments as easily as possible to underlying tools. Restrictions:
 
 * This tool ignores all GHC RTS options (i.e., it sets `-rtsopts=ignoreAll`)
 * The only location where `--ghc` is accepted is as the very first argument to the command
 * The `exec` command is only recognized immediately following `--ghc VERSION` or, if that is absent, as the first argument
+
+## Default GHC version
+
+If you leave off the `--ghc VERSION`, currently the executable will default to using GHC 8.10.4. This is _not good behavior_. Instead, there should be a config file for the default GHC version, potentially with environment variable and local filepath overrides, and some intelligent way of setting that default value on first execution. Contributions welcome to make that happen!
 
 ## Maintainers welcome!
 
