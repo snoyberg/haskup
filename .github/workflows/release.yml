@@ -43,14 +43,14 @@ jobs:
     name: Windows
     runs-on: windows-latest
     env:
-      STACK_ROOT: "c:\sr"
+      STACK_ROOT: "c:\\sr"
     steps:
       - name: Clone project
         uses: actions/checkout@v2
       - name: Cache dependencies
         uses: actions/cache@v1
         with:
-          path: c:/sr
+          path: "c:\\sr"
           key: ${{ runner.os }}-${{ hashFiles('stack.yaml') }}
       - name: Install NSIS
         run: choco install nsis-unicode -y
