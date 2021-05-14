@@ -13,7 +13,7 @@ import Development.NSIS.Plugins.EnvVarUpdate
 
 executables :: [FilePath]
 executables =
-  [ "haskwrap.exe"
+  [ "haskup.exe"
   ]
 
 main :: IO ()

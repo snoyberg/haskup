@@ -26,6 +26,17 @@ library:
   - pantry
 
 executables:
+  haskup:
+    main:                haskup-main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    dependencies:
+    - optparse-simple
+    - haskup
+    - transformers
+
   haskwrap:
     main:                haskwrap.hs
     source-dirs:         app
