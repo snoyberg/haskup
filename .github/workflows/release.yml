@@ -11,7 +11,7 @@ on:
 
 jobs:
   sanity:
-    name: Sanity test (non-Windows)
+    name: Linux/Mac
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: true
@@ -40,15 +40,17 @@ jobs:
           name: ${{ runner.os }}
           path: bin/*
   integration-tests:
-    name: Build and publish artifacts
+    name: Windows
     runs-on: windows-latest
+    env:
+      STACK_ROOT: "c:\sr"
     steps:
       - name: Clone project
         uses: actions/checkout@v2
       - name: Cache dependencies
         uses: actions/cache@v1
         with:
-          path: ~/.stack
+          path: c:/sr
           key: ${{ runner.os }}-${{ hashFiles('stack.yaml') }}
       - name: Install NSIS
         run: choco install nsis-unicode -y
