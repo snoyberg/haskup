@@ -50,6 +50,8 @@ jobs:
         with:
           path: ~/.stack
           key: ${{ runner.os }}-${{ hashFiles('stack.yaml') }}
+      - name: Install NSIS
+        run: choco install nsis-unicode -y
       - shell: bash
         name: Build and run tests
         run: |
@@ -57,8 +59,10 @@ jobs:
           stack upgrade
           stack --version
           stack test --no-terminal --copy-bins --local-bin-path bin
-      # FIXME currently it's exactly the same as Linux and OS X
-      # In the near future, add a Windows installer creator and run it here
+      - name: Generate installer
+        run: |
+          bin\installer-generator.exe
+          "c:\Program Files (x86)\NSIS\Unicode\makensis.exe" -V3 bin\haskup-installer.nsi
       - name: Upload bindist
         uses: actions/upload-artifact@v2
         with:

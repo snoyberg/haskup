@@ -16,14 +16,24 @@ description:         Please see the README on GitHub at <https://github.com/snoy
 
 dependencies:
 - base >= 4.14 && < 5
-- stack >= 2.5 && < 2.6
 - rio
 
 executables:
   haskwrap:
-    main:                Main.hs
+    main:                haskwrap.hs
     source-dirs:         app
     ghc-options:
     - -threaded
     - -with-rtsopts=-N
     - -rtsopts=ignoreAll
+    dependencies:
+    - stack >= 2.5 && < 2.6
+
+  installer-generator:
+    main:                installer.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    dependencies:
+    - nsis
