@@ -55,3 +55,8 @@ executables:
     - -rtsopts
     dependencies:
     - nsis
+    - http-download
+    - path
+    - path-io
+    - haskup
+    - cryptonite
